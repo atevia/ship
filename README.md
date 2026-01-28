@@ -1,13 +1,6 @@
-<pre>
-                                      ███████╗██╗  ██╗██╗██████╗ 
-                                      ██╔════╝██║  ██║██║██╔══██╗
-                                      ███████╗███████║██║██████╔╝
-                                      ╚════██║██╔══██║██║██╔═══╝ 
-                                      ███████║██║  ██║██║██║     
-                                      ╚══════╝╚═╝  ╚═╝╚═╝╚═╝     
-                                      
-                                      Secure Deploy &amp; Transfer Tool
-</pre>
+<p align="center">
+  <img src="banner.svg" alt="Ship banner" width="100%" />
+</p>
 
 ![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
@@ -309,6 +302,7 @@ ship rollback production:/var/www/my-app --after "pm2 reload my-app"
 ## 📄 License
 
 MIT
+
 
 
 

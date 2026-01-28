@@ -1,33 +1,49 @@
-# 🚀 Ship — Secure Deploy & Transfer Tool for VPS
+# 🚀 Ship
 
-**Ship** is a CLI tool created by **Atevia** to securely transfer, synchronize and deploy projects between Linux servers using SSH.
+![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Platform](https://img.shields.io/badge/Platform-Linux-blue)
+![Status](https://img.shields.io/badge/Status-Stable-success)
 
-Ship is designed for **developers, agencies and small teams** that deploy applications to VPS servers and want a **simple, secure and modern workflow** without heavy infrastructure tools.
+**Ship** is a modern, secure and opinionated CLI tool to **transfer, synchronize and deploy projects to Linux servers using SSH**.
+
+It is designed for developers, freelancers and small teams that deploy applications to VPS servers and want a **simple, reliable and production-ready workflow** without heavy infrastructure tools.
 
 ---
 
-## ✨ What is Ship?
+## ✨ Why Ship?
 
-Ship solves three common problems when working with VPS deployments:
+Ship focuses on **Developer Experience (DX)** and **production safety**:
+
+- Secure SSH-based transfers
+- Atomic deployments with instant rollback
+- Profiles for multiple servers
+- Gitignore-style file exclusions
+- Progress indicators
+- Zero-downtime deploys
+
+---
+
+## 🧠 What Ship Solves
 
 ### 1️⃣ Secure transfers (`push`)
 - Packages your project
-- Ignores unnecessary files
-- Calculates SHA256 checksum
+- Excludes unnecessary files
+- Generates SHA256 checksum
 - Transfers via SSH
 - Verifies integrity
 - Extracts safely on the destination
 
 ### 2️⃣ Fast synchronization (`sync`)
 - Uses **rsync** internally
-- Sends only file deltas
-- Keeps Ship’s clean UX (profiles, flags, ignore)
+- Transfers only file deltas
+- Ideal for frequent updates
 
 ### 3️⃣ Atomic deployments (`deploy`)
-- Release-based deployments
+- Release-based directory structure
 - `current` / `previous` symlinks
-- Zero-downtime switch
-- Instant rollback
+- Instant rollback if needed
+- Zero-downtime switches
 
 ---
 
@@ -38,7 +54,7 @@ Ship solves three common problems when working with VPS deployments:
 curl -fsSL https://raw.githubusercontent.com/atevia/ship/main/scripts/install.sh | bash
 ````
 
-Verify:
+Verify installation:
 
 ```bash
 ship help
@@ -48,9 +64,9 @@ ship help
 
 ## ⚙️ Profiles (recommended)
 
-Profiles avoid repeating SSH credentials on every command.
+Profiles allow you to reuse SSH configuration without repeating flags.
 
-### Create config
+### Initialize configuration
 
 ```bash
 ship init
@@ -62,19 +78,19 @@ This creates:
 ~/.ship/config
 ```
 
-### Example config
+### Example configuration
 
 ```ini
-[prod]
-user=atevia
-host=51.222.15.232
+[production]
+user=deploy
+host=203.0.113.10
 key=~/.ssh/id_ed25519
 port=22
 
 [staging]
 user=ubuntu
-host=3.227.242.240
-key=~/.ssh/lightsail_id
+host=198.51.100.25
+key=~/.ssh/id_ed25519
 port=22
 ```
 
@@ -91,7 +107,7 @@ ship profiles
 Before transferring or deploying:
 
 ```bash
-ship test prod
+ship test production
 ```
 
 This checks:
@@ -121,7 +137,7 @@ Ship automatically detects:
 * `<project>/.shipignore`
 * `./.shipignore`
 
-Override manually:
+Manual override:
 
 ```bash
 --shipignore /path/to/.shipignore
@@ -135,7 +151,7 @@ Override manually:
 
 ## 🔹 `ship push`
 
-Secure transfer using packaged artifacts.
+Secure artifact-based transfer.
 
 ### Usage
 
@@ -146,22 +162,14 @@ ship push <source> <destination> [flags]
 ### Example
 
 ```bash
-ship push ./foco-app prod:/var/www/foco-app --progress
+ship push ./my-app production:/var/www/my-app --progress
 ```
-
-### What it does
-
-1. Packages the project
-2. Generates SHA256 checksum
-3. Transfers via SSH
-4. Verifies checksum remotely
-5. Extracts safely
 
 ---
 
 ## 🔹 `ship sync`
 
-Fast incremental sync using rsync.
+Fast incremental synchronization.
 
 ### Usage
 
@@ -172,7 +180,7 @@ ship sync <source> <destination> [flags]
 ### Example
 
 ```bash
-ship sync ./foco-app prod:/var/www/foco-app --progress
+ship sync ./my-app production:/var/www/my-app --progress
 ```
 
 Best for frequent updates.
@@ -189,19 +197,19 @@ Atomic deployment with releases and rollback.
 ship deploy <source> <destination> [flags]
 ```
 
-### Example (Next.js + PM2)
+### Example
 
 ```bash
-ship deploy ./foco-app prod:/var/www/foco-app \
-  --after "cd /var/www/foco-app/current && pnpm install --frozen-lockfile && pnpm build && pm2 reload foco" \
-  --keep 7 \
+ship deploy ./my-app production:/var/www/my-app \
+  --after "cd /var/www/my-app/current && npm install --production && pm2 reload my-app" \
+  --keep 5 \
   --progress
 ```
 
 ### Remote structure
 
 ```text
-/var/www/foco-app/
+/var/www/my-app/
 ├── releases/
 │   ├── 20240128-142233/
 │   ├── 20240128-150912/
@@ -214,18 +222,10 @@ ship deploy ./foco-app prod:/var/www/foco-app \
 
 ## 🔁 `ship rollback`
 
-Rollback to the previous release.
-
-### Usage
+Rollback to the previous release instantly.
 
 ```bash
-ship rollback <destination> [flags]
-```
-
-### Example
-
-```bash
-ship rollback prod:/var/www/foco-app --after "pm2 reload foco"
+ship rollback production:/var/www/my-app --after "pm2 reload my-app"
 ```
 
 ---
@@ -252,12 +252,6 @@ ship rollback prod:/var/www/foco-app --after "pm2 reload foco"
 | `--before "<cmd>"` | Run remote command before extract or switch |
 | `--after "<cmd>"`  | Run remote command after extract or switch  |
 
-Example:
-
-```bash
---after "pm2 reload foco"
-```
-
 ---
 
 ### 🚀 Deploy-only flags
@@ -269,39 +263,13 @@ Example:
 
 ---
 
-## ℹ️ Help & version
-
-```bash
-ship help
-ship version
-```
-
----
-
-## 🧠 Design philosophy
-
-Ship does **not** try to replace:
-
-* Kubernetes
-* Ansible
-* Terraform
-
-Ship **does replace**:
-
-* fragile rsync scripts
-* `tar | ssh | tar` one-liners
-* unsafe overwrites
-* downtime caused by manual deploys
-
----
-
 ## 🏆 When to use Ship
 
-✅ VPS
+✅ VPS deployments
 ✅ Web applications
 ✅ Node / Next.js / React
-✅ Agencies & freelancers
-✅ Simple but professional infra
+✅ Small teams & agencies
+✅ Simple but professional infrastructure
 
 ❌ Large clusters
 ❌ Continuous bidirectional sync
@@ -314,7 +282,7 @@ Ship **does replace**:
 * SSH key authentication
 * Key permission validation
 * End-to-end checksum verification
-* Atomic deploys
+* Atomic deployments
 * Instant rollback
 
 ---
@@ -328,3 +296,7 @@ Ship **does replace**:
 * CI/CD integration
 
 ---
+
+## 📄 License
+
+MIT

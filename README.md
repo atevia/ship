@@ -274,15 +274,15 @@ ship rollback production:/var/www/my-app --after "pm2 reload my-app"
 
 ## 🏆 When to use Ship
 
-✅ VPS deployments
-✅ Web applications
-✅ Node / Next.js / React
-✅ Small teams & agencies
-✅ Simple but professional infrastructure
+- ✅ VPS deployments
+- ✅ Web applications
+- ✅ Node / Next.js / React
+- ✅ Small teams & agencies
+- ✅ Simple but professional infrastructure
 
-❌ Large clusters
-❌ Continuous bidirectional sync
-❌ Backup solutions (use borg/restic)
+- ❌ Large clusters
+- ❌ Continuous bidirectional sync
+- ❌ Backup solutions (use borg/restic)
 
 ---
 
@@ -309,6 +309,7 @@ ship rollback production:/var/www/my-app --after "pm2 reload my-app"
 ## 📄 License
 
 MIT
+
 
 
 
